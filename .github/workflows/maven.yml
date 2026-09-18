@@ -1,5 +1,4 @@
-
-name: Build Paper Plugin
+name: Build Paper 26.2 Plugin
 
 on:
   push:
@@ -13,50 +12,23 @@ jobs:
       - name: Repository auschecken
         uses: actions/checkout@v4
 
-      - name: Java 21 einrichten
-        uses: actions/setup-java@v4
+      - name: Java 25 einrichten
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
 
-      - name: pom.xml finden
-        id: find-pom
-        shell: bash
+      - name: Java Version prüfen
         run: |
-          POM=$(find . -name "pom.xml" -type f | head -n 1)
-
-          if [ -z "$POM" ]; then
-            echo "FEHLER: Keine pom.xml gefunden!"
-            echo "Dateien im Repository:"
-            find . -maxdepth 5 -type f | sort
-            exit 1
-          fi
-
-          echo "Gefundene pom.xml: $POM"
-          echo "pom=$POM" >> "$GITHUB_OUTPUT"
+          java -version
+          javac -version
 
       - name: Maven Build
-        run: mvn -B -f "${{ steps.find-pom.outputs.pom }}" clean package
+        run: mvn -B -f "./WorldPlugin-Paper-26.2/pom.xml" clean package
 
-      - name: Plugin-JAR finden
-        id: find-jar
-        shell: bash
-        run: |
-          JAR=$(find . -path "*/target/*.jar" -type f ! -name "*-sources.jar" ! -name "*-javadoc.jar" | head -n 1)
-
-          if [ -z "$JAR" ]; then
-            echo "FEHLER: Keine fertige JAR gefunden!"
-            find . -maxdepth 6 -type f | sort
-            exit 1
-          fi
-
-          echo "Gefundene Plugin-JAR: $JAR"
-          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
-
-      - name: Plugin-JAR als Artifact hochladen
+      - name: Plugin JAR hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: WorldPlugin
-          path: ${{ steps.find-jar.outputs.jar }}
-
+          name: WorldPlugin-Paper-26.2
+          path: "./WorldPlugin-Paper-26.2/target/WorldPlugin-*.jar"
