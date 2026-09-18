@@ -1,4 +1,4 @@
-```yaml
+
 name: Build Paper Plugin
 
 on:
@@ -59,4 +59,4 @@ jobs:
         with:
           name: WorldPlugin
           path: ${{ steps.find-jar.outputs.jar }}
-```
+
