@@ -1,0 +1,17 @@
+name: WorldPlugin
+version: 1.0.0
+main: de.example.worldplugin.WorldPlugin
+api-version: '26.2'
+author: DeinName
+description: Erstellt einen Bereich um die Position des Spielers.
+
+commands:
+  world:
+    description: Verwaltet den World-Bereich
+    usage: /world <set|remove|info>
+    permission: world.use
+
+permissions:
+  world.use:
+    description: Erlaubt die Verwendung von /world
+    default: op

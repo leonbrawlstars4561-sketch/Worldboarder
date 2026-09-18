@@ -1,0 +1,6 @@
+# Radius des Bereichs.
+# 10 bedeutet X - 10 bis X + 10 und Z - 10 bis Z + 10.
+radius: 10
+
+# Bereich nach Server-Neustart behalten.
+save-region: true
