@@ -2,6 +2,7 @@ name: WorldPlugin
 version: 1.0.0
 main: de.example.worldplugin.WorldPlugin
 api-version: '26.2'
+
 author: DeinName
 description: Erstellt einen Bereich um die Position des Spielers.
 
