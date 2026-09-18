@@ -1,3 +1,4 @@
+```yaml
 name: Build Paper Plugin
 
 on:
@@ -19,11 +20,43 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Maven Build
-        run: mvn -B -f WorldPlugin/pom.xml clean package
+      - name: pom.xml finden
+        id: find-pom
+        shell: bash
+        run: |
+          POM=$(find . -name "pom.xml" -type f | head -n 1)
 
-      - name: Plugin-JAR hochladen
+          if [ -z "$POM" ]; then
+            echo "FEHLER: Keine pom.xml gefunden!"
+            echo "Dateien im Repository:"
+            find . -maxdepth 5 -type f | sort
+            exit 1
+          fi
+
+          echo "Gefundene pom.xml: $POM"
+          echo "pom=$POM" >> "$GITHUB_OUTPUT"
+
+      - name: Maven Build
+        run: mvn -B -f "${{ steps.find-pom.outputs.pom }}" clean package
+
+      - name: Plugin-JAR finden
+        id: find-jar
+        shell: bash
+        run: |
+          JAR=$(find . -path "*/target/*.jar" -type f ! -name "*-sources.jar" ! -name "*-javadoc.jar" | head -n 1)
+
+          if [ -z "$JAR" ]; then
+            echo "FEHLER: Keine fertige JAR gefunden!"
+            find . -maxdepth 6 -type f | sort
+            exit 1
+          fi
+
+          echo "Gefundene Plugin-JAR: $JAR"
+          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
+
+      - name: Plugin-JAR als Artifact hochladen
         uses: actions/upload-artifact@v4
         with:
           name: WorldPlugin
-          path: WorldPlugin/target/WorldPlugin-*.jar
+          path: ${{ steps.find-jar.outputs.jar }}
+```
